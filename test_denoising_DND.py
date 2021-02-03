@@ -23,6 +23,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--model', type=str, default='GDANet+',
                                        help="Model selection: GDANet or GDANet+, (default:GDANet+)")
 parser.add_argument('--input_fname', type=str, default='', help="File name of the noisy image")
+parser.add_argument('--output_fname', type=str, default='', help="File name of the denoised image")
 args = parser.parse_args()
 
 
@@ -59,6 +60,9 @@ with torch.autograd.no_grad():
     outputs.clamp_(0.0, 1.0)
 
 im_denoise = img_as_ubyte(outputs.cpu().numpy()[0,].transpose([1,2,0]))
+
+if len(args.output_fname) > 0:
+    pil_image.fromarray(im_denoise).save(args.output_fname)
 
 plt.subplot(1,2,1)
 plt.imshow(im_noisy)
