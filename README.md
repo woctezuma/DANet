@@ -1,3 +1,26 @@
+# Usage on Colab
+
+```bash
+%cd /content/
+
+%rm -rf DANet/
+!git clone https://github.com/woctezuma/DANet.git
+
+%cd DANet/
+!git checkout quality-of-life
+```
+
+```bash
+fname = 'input.png'
+
+!curl -o {fname} https://i.imgur.com/Lvj9s3g.png
+
+!python test_denoising_DND.py \
+ --input_fname {fname} \
+ --output_fname output.jpg \
+
+```
+
 # DANet
 # Dual Adversarial Network: Toward Real-world Noise Removal and Noise Generation (ECCV, 2020) [ECCV Version](DANet_paper_ECCV.pdf) [arXiv Version](DANet_paper_arXiv.pdf)
 
