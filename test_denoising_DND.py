@@ -17,10 +17,12 @@ from scipy.io import loadmat
 from skimage import img_as_float32, img_as_ubyte
 from matplotlib import pyplot as plt
 from utils import PadUNet
+from PIL import Image as pil_image
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--model', type=str, default='GDANet+',
                                        help="Model selection: GDANet or GDANet+, (default:GDANet+)")
+parser.add_argument('--input_fname', type=str, default='', help="File name of the noisy image")
 args = parser.parse_args()
 
 
@@ -37,7 +39,15 @@ else:
     sys.exit('Please input the corrected model')
 
 # read the images
-im_noisy = loadmat('./test_data/DND/1.mat')['im_noisy']
+try:
+    # Reference: https://stackoverflow.com/a/33507138/
+    png = pil_image.open(args.input_fname).convert('RGBA')
+    background = pil_image.new('RGBA', png.size, (255,255,255))
+    jpg = pil_image.alpha_composite(background, png).convert('RGB')
+
+    im_noisy = jpg
+except FileNotFoundError:
+    im_noisy = loadmat('./test_data/DND/1.mat')['im_noisy']
 
 # denoising
 inputs = torch.from_numpy(img_as_float32(im_noisy).transpose([2,0,1])).unsqueeze(0).cuda()
